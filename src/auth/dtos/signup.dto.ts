@@ -1,16 +1,35 @@
-import { IsString } from 'class-validator';
+import {
+  IsMobilePhone,
+  IsNotEmpty,
+  IsOptional,
+  IsString,
+} from 'class-validator';
 import { SchoolStatus } from '../enums/school-status.enum';
+import { StudyArea } from '../enums/study-area.enum';
 
 export class SignupDTO {
   @IsString()
-  name: string;
+  @IsNotEmpty()
+  nameSurname: string;
+
+  @IsNotEmpty()
+  @IsString()
+  password: string;
 
   @IsString()
-  surname: string;
+  @IsMobilePhone('tr-TR')
+  @IsNotEmpty()
+  mobile: string;
 
   @IsString()
-  school: string;
+  @IsOptional()
+  school?: string;
 
   @IsString()
+  @IsNotEmpty()
   schoolStatus: SchoolStatus;
+
+  @IsString()
+  @IsNotEmpty()
+  studyArea: StudyArea;
 }

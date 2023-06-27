@@ -1,27 +1,28 @@
-import { Controller, Post } from '@nestjs/common';
+import { Body, Controller, Post } from '@nestjs/common';
 import { AuthService } from './auth.service';
+import { SignupDTO } from './dtos/signup.dto';
 
 @Controller('auth')
 export class AuthController {
   constructor(private authService: AuthService) {}
 
-  @Post('api/signup')
-  signup() {
-    this.authService.signup();
+  @Post('signup')
+  async signup(@Body() userCredentials: SignupDTO) {
+    return this.authService.signup(userCredentials);
   }
 
-  @Post('api/login')
+  @Post('login')
   login() {
-    this.authService.login();
+    return this.authService.login();
   }
 
-  @Post('api/logout')
+  @Post('logout')
   logout() {
-    this.authService.logout();
+    return this.authService.logout();
   }
 
   @Post('refresh')
   refreshTokens() {
-    this.authService.refreshTokens();
+    return this.authService.refreshTokens();
   }
 }
