@@ -1,17 +1,33 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  ForbiddenException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { User } from 'src/users/user.model';
 import { SignupDTO } from './dtos/signup.dto';
 import * as bcrypt from 'bcrypt';
+import { JwtService } from '@nestjs/jwt';
+import { Tokens } from './types';
+import { time } from 'console';
+import { LoginDTO } from './dtos/login.dto';
+import { NotFoundError } from 'rxjs';
 
 @Injectable()
 export class AuthService {
-  constructor(@InjectModel(User.name) private userModel: Model<User>) {}
+  constructor(
+    @InjectModel(User.name) private userModel: Model<User>,
+    private jwtService: JwtService,
+  ) {}
 
-  async signup(userCredentials: SignupDTO) {
+  refreshTokens() {}
+
+  async signup(userCredentials: SignupDTO): Promise<Tokens> {
     const { mobile, password } = userCredentials;
     const duplicatedMobile = await this.userModel.findOne({ mobile });
+
     if (duplicatedMobile)
       throw new BadRequestException('This phone number already taken');
 
@@ -20,10 +36,70 @@ export class AuthService {
 
     userCredentials.password = hashedPassword;
 
-    await this.userModel.create(userCredentials);
-    return { status: 'Success' };
+    const newUser = await this.userModel.create(userCredentials);
+
+    const tokens = await this.getTokens(newUser.id, newUser.mobile);
+    await this.updateRtHash(newUser.id, tokens.refresh_token);
+
+    return tokens;
   }
-  login() {}
-  logout() {}
-  refreshTokens() {}
+
+  async login(userCredentials: LoginDTO): Promise<Tokens> {
+    const { mobile, password } = userCredentials;
+
+    const user = await this.userModel.findOne({ mobile }).select('+password');
+    if (!user) throw new NotFoundException();
+
+    const passwordMatch = await bcrypt.compare(password, user.password);
+    if (!passwordMatch) throw new ForbiddenException('Invalid Password');
+
+    const tokens = await this.getTokens(user.id, user.mobile);
+    await this.updateRtHash(user.id, tokens.refresh_token);
+
+    return tokens;
+  }
+
+  async logout(userId: number) {
+    await this.userModel.updateMany(
+      { _id: userId },
+      { $set: { hashedRt: null } },
+    );
+  }
+
+  // UTILITES
+  async updateRtHash(userId: number, rt: string) {
+    const hash = await bcrypt.hash(rt, 10);
+    await this.userModel.findByIdAndUpdate(userId, {
+      $set: { hashedRt: hash },
+    });
+  }
+  async getTokens(userId: number, mobile: string): Promise<Tokens> {
+    const [at, rt] = await Promise.all([
+      this.jwtService.signAsync(
+        {
+          sub: userId,
+          mobile,
+        },
+        {
+          secret: 'at-secret',
+          expiresIn: 60 * 15,
+        },
+      ),
+      this.jwtService.signAsync(
+        {
+          sub: userId,
+          mobile,
+        },
+        {
+          secret: 'rt-secret',
+          expiresIn: 60 * 60 * 24 * 7,
+        },
+      ),
+    ]);
+
+    return {
+      access_token: at,
+      refresh_token: rt,
+    };
+  }
 }

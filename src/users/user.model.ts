@@ -33,6 +33,9 @@ export class User {
   })
   studyArea: StudyArea;
 
+  @Prop({ required: false, type: String })
+  hashedRt: string;
+
   constructor(partial: Partial<User>) {
     Object.assign(this, partial);
   }
