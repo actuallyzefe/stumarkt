@@ -13,13 +13,14 @@ import { JwtService } from '@nestjs/jwt';
 import { Tokens } from './types';
 import { time } from 'console';
 import { LoginDTO } from './dtos/login.dto';
-import { NotFoundError } from 'rxjs';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class AuthService {
   constructor(
     @InjectModel(User.name) private userModel: Model<User>,
     private jwtService: JwtService,
+    private configService: ConfigService,
   ) {}
 
   async signup(userCredentials: SignupDTO): Promise<Tokens> {
@@ -79,8 +80,8 @@ export class AuthService {
           mobile,
         },
         {
-          secret: 'at-secret',
-          expiresIn: 60 * 15,
+          secret: this.configService.get<string>('AT_SECRET'),
+          expiresIn: '15m',
         },
       ),
       this.jwtService.signAsync(
@@ -89,8 +90,8 @@ export class AuthService {
           mobile,
         },
         {
-          secret: 'rt-secret',
-          expiresIn: 60 * 60 * 24 * 7,
+          secret: this.configService.get<string>('RT_SECRET'),
+          expiresIn: '7d',
         },
       ),
     ]);
