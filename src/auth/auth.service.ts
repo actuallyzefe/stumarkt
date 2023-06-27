@@ -22,8 +22,6 @@ export class AuthService {
     private jwtService: JwtService,
   ) {}
 
-  refreshTokens() {}
-
   async signup(userCredentials: SignupDTO): Promise<Tokens> {
     const { mobile, password } = userCredentials;
     const duplicatedMobile = await this.userModel.findOne({ mobile });
@@ -101,5 +99,18 @@ export class AuthService {
       access_token: at,
       refresh_token: rt,
     };
+  }
+
+  async refreshTokens(userId: number, rt: string) {
+    const user = await this.userModel.findById(userId);
+    if (!user || !user.hashedRt) throw new ForbiddenException();
+
+    const rtMatch = await bcrypt.compare(rt, user.hashedRt);
+    if (!rtMatch) throw new ForbiddenException();
+
+    const tokens = await this.getTokens(user.id, user.mobile);
+    await this.updateRtHash(user.id, tokens.refresh_token);
+
+    return tokens;
   }
 }
