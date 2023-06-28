@@ -23,6 +23,9 @@ export class Product {
   @Prop({ required: true, type: String })
   productNo: string;
 
+  @Prop({ required: true, type: Array })
+  tags: string[];
+
   constructor(partial: Partial<Product>) {
     Object.assign(this, partial);
   }

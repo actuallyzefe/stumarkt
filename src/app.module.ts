@@ -6,6 +6,7 @@ import { UsersModule } from './users/users.module';
 import { APP_GUARD } from '@nestjs/core';
 import { AtGuard } from './auth/common/guards';
 import { ProductsModule } from './products/products.module';
+import { AwsModule } from './aws/aws.module';
 
 @Module({
   imports: [
@@ -17,6 +18,7 @@ import { ProductsModule } from './products/products.module';
     AuthModule,
     UsersModule,
     ProductsModule,
+    AwsModule,
   ],
   providers: [
     {
