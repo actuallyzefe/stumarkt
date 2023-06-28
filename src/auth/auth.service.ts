@@ -14,6 +14,7 @@ import { Tokens } from './types';
 import { time } from 'console';
 import { LoginDTO } from './dtos/login.dto';
 import { ConfigService } from '@nestjs/config';
+import { generateAccountNumber } from 'src/utils/generate-account-number';
 
 @Injectable()
 export class AuthService {
@@ -34,8 +35,11 @@ export class AuthService {
     const hashedPassword = await bcrypt.hash(password, salt);
 
     userCredentials.password = hashedPassword;
+    const accountNumber = generateAccountNumber();
 
     const newUser = await this.userModel.create(userCredentials);
+    newUser.accountNumber = accountNumber;
+    newUser.save();
 
     const tokens = await this.getTokens(newUser.id, newUser.mobile);
     await this.updateRtHash(newUser.id, tokens.refresh_token);

@@ -1,5 +1,5 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { HydratedDocument } from 'mongoose';
+import mongoose, { HydratedDocument } from 'mongoose';
 import { SchoolStatus } from 'src/auth/enums/school-status.enum';
 import { StudyArea } from 'src/auth/enums/study-area.enum';
 
@@ -15,6 +15,18 @@ export class User {
 
   @Prop({ required: true, type: String, unique: true })
   mobile: string;
+
+  @Prop({ required: false, ref: 'User', type: mongoose.Types.ObjectId })
+  followers: User[];
+
+  @Prop({ required: false, ref: 'User', type: mongoose.Types.ObjectId })
+  followings: User[];
+
+  @Prop({ required: false, type: String, default: '' })
+  bio: string;
+
+  @Prop({ required: false, ref: 'Product', type: mongoose.Types.ObjectId })
+  listings: [];
 
   @Prop({ required: false, type: String })
   school: string;
@@ -35,6 +47,9 @@ export class User {
 
   @Prop({ required: false, type: String })
   hashedRt: string;
+
+  @Prop({ type: String, unique: true })
+  accountNumber: string;
 
   constructor(partial: Partial<User>) {
     Object.assign(this, partial);
