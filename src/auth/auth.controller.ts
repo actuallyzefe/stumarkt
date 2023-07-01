@@ -32,7 +32,6 @@ export class AuthController {
     return this.authService.login(userCredentials);
   }
 
-  @UseGuards(AtGuard)
   @Post('logout')
   @HttpCode(HttpStatus.OK)
   logout(@GetCurrentUserId() userId: number) {

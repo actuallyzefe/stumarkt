@@ -45,6 +45,12 @@ export class ProductsService {
 
       await product.save();
 
+      await user.updateOne({
+        $push: {
+          listings: product,
+        },
+      });
+
       return { status: 'Success', msg: 'Product uploaded' };
     } catch (e) {
       const msg = e.message;
