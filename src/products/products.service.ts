@@ -5,7 +5,8 @@ import { AwsService } from 'src/aws/aws.service';
 import { User } from 'src/users/user.model';
 import { Product } from './product.model';
 import { ProductDTO } from './dtos/product.dto';
-import { generateAccountNumber } from 'src/utils/generate-account-number';
+
+import { generateNumber } from 'src/utils/generate-number';
 
 @Injectable()
 export class ProductsService {
@@ -24,13 +25,12 @@ export class ProductsService {
       productDetails;
     const user = await this.userModel.findById(userId);
     const key = `${file.fieldname}${Date.now()}`;
-    const account_number = user.accountNumber;
+    const productNo = generateNumber(7);
     const parentFolder = 'products';
 
     try {
-      await this.awsService.uploadFile(file, key, parentFolder, account_number);
+      await this.awsService.uploadFile(file, key, parentFolder, productNo);
 
-      const productNo = generateAccountNumber();
       const product = await this.productModel.create({
         tags,
         title,
@@ -39,9 +39,9 @@ export class ProductsService {
         productStatus,
         type,
         imageUrl: key,
-        uploadedBy: user.nameSurname,
+        uploadedBy: user._id,
+        productNo,
       });
-      product.productNo = productNo;
 
       await product.save();
 
@@ -51,5 +51,9 @@ export class ProductsService {
       console.log(e);
       return { msg };
     }
+  }
+
+  async findProducts() {
+    return this.productModel.find().populate('uploadedBy', 'nameSurname');
   }
 }

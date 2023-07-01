@@ -23,13 +23,13 @@ export class Product {
   @Prop({ required: true, type: Number })
   price: number;
 
-  @Prop({ type: String })
+  @Prop({ required: true, type: String })
   productNo: string;
 
   @Prop({ required: false, type: Array })
   tags: string[];
 
-  @Prop({ required: true, ref: 'User' })
+  @Prop({ required: true, ref: 'User', type: mongoose.Types.ObjectId })
   uploadedBy: mongoose.Types.ObjectId;
 
   constructor(partial: Partial<Product>) {

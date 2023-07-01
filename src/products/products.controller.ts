@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Get,
   HttpCode,
   MaxFileSizeValidator,
   ParseFilePipe,
@@ -10,7 +11,7 @@ import {
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { ProductsService } from './products.service';
-import { GetCurrentUserId } from 'src/auth/common/decorators';
+import { GetCurrentUserId, Public } from 'src/auth/common/decorators';
 import { ProductDTO } from './dtos/product.dto';
 
 @Controller('products')
@@ -31,5 +32,11 @@ export class ProductsController {
     @Body() productDetails: ProductDTO,
   ) {
     return this.productsService.uploadProduct(file, userId, productDetails);
+  }
+
+  @Public()
+  @Get('get')
+  findProducts() {
+    return this.productsService.findProducts();
   }
 }

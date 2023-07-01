@@ -11,10 +11,9 @@ import { SignupDTO } from './dtos/signup.dto';
 import * as bcrypt from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
 import { Tokens } from './types';
-import { time } from 'console';
 import { LoginDTO } from './dtos/login.dto';
 import { ConfigService } from '@nestjs/config';
-import { generateAccountNumber } from 'src/utils/generate-account-number';
+import { GenerateNumberService } from 'src/services/generate-number.service';
 
 @Injectable()
 export class AuthService {
@@ -22,6 +21,7 @@ export class AuthService {
     @InjectModel(User.name) private userModel: Model<User>,
     private jwtService: JwtService,
     private configService: ConfigService,
+    private generateNumberService: GenerateNumberService,
   ) {}
 
   async signup(userCredentials: SignupDTO): Promise<Tokens> {
@@ -35,7 +35,7 @@ export class AuthService {
     const hashedPassword = await bcrypt.hash(password, salt);
 
     userCredentials.password = hashedPassword;
-    const accountNumber = generateAccountNumber();
+    const accountNumber = await this.generateNumberService.validAccountNumber();
 
     const newUser = await this.userModel.create(userCredentials);
     newUser.accountNumber = accountNumber;

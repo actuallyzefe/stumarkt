@@ -25,10 +25,10 @@ export class AwsService {
     file: Express.Multer.File,
     key: string,
     parent_folder: string,
-    account_number: string,
+    product_number: string,
   ) {
     const bucket = this.configService.get<string>('S3_BUCKET');
-    const folder = `${parent_folder}/${account_number}`;
+    const folder = `${parent_folder}/${product_number}`;
     const newKey = `${folder}/${key}`;
 
     const input: PutObjectCommandInput = {
