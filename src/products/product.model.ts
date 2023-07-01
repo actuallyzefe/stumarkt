@@ -1,30 +1,36 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { HydratedDocument } from 'mongoose';
+import mongoose, { HydratedDocument } from 'mongoose';
 
 @Schema({
   timestamps: true,
 })
 export class Product {
   @Prop({ required: true, type: String })
-  description: string;
+  title: string;
 
   @Prop({ required: true, type: String })
-  image: string;
+  description: string;
+
+  @Prop({ required: true, type: Array })
+  imageUrls: string[];
 
   @Prop({ required: true, type: String })
   type: string;
 
   @Prop({ required: true, type: String })
-  status: string;
+  productStatus: string;
 
   @Prop({ required: true, type: Number })
   price: number;
 
-  @Prop({ required: true, type: String })
+  @Prop({ type: String })
   productNo: string;
 
-  @Prop({ required: true, type: Array })
+  @Prop({ required: false, type: Array })
   tags: string[];
+
+  @Prop({ required: true, ref: 'User' })
+  uploadedBy: mongoose.Types.ObjectId;
 
   constructor(partial: Partial<Product>) {
     Object.assign(this, partial);

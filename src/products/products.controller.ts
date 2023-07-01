@@ -1,4 +1,5 @@
 import {
+  Body,
   Controller,
   HttpCode,
   MaxFileSizeValidator,
@@ -10,15 +11,16 @@ import {
 import { FileInterceptor } from '@nestjs/platform-express';
 import { ProductsService } from './products.service';
 import { GetCurrentUserId } from 'src/auth/common/decorators';
+import { ProductDTO } from './dtos/product.dto';
 
 @Controller('products')
 export class ProductsController {
   constructor(private productsService: ProductsService) {}
 
-  @UseInterceptors(FileInterceptor('file'))
-  @Post('/upload-image')
+  @UseInterceptors(FileInterceptor('productImage'))
+  @Post('/upload-product')
   @HttpCode(200)
-  async uploadSelfie(
+  async uploadProduct(
     @GetCurrentUserId() userId: number,
     @UploadedFile(
       new ParseFilePipe({
@@ -26,8 +28,8 @@ export class ProductsController {
       }),
     )
     file: Express.Multer.File,
+    @Body() productDetails: ProductDTO,
   ) {
-    const parentFolder = 'products';
-    return this.productsService.uploadProductImages(file, userId, parentFolder);
+    return this.productsService.uploadProduct(file, userId, productDetails);
   }
 }
