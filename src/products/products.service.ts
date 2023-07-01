@@ -45,7 +45,7 @@ export class ProductsService {
 
       await product.save();
 
-      return { status: 'Success', msg: 'Image uploaded' };
+      return { status: 'Success', msg: 'Product uploaded' };
     } catch (e) {
       const msg = e.message;
       console.log(e);
