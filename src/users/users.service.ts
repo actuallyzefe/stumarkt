@@ -3,106 +3,70 @@ import {
   Injectable,
   InternalServerErrorException,
   NotFoundException,
-  Request,
 } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { User } from './user.model';
+import { FollowLogicDTO } from './dtos/follow-logic.dto';
 
 @Injectable()
 export class UsersService {
   constructor(@InjectModel(User.name) private userModel: Model<User>) {}
 
-  uploadFile() {}
-
-  // NEED REFACTORING // follow and unfollow methods kinda similar. We can refactor them later
-  async followUser(req: any, postedNameSurname: string) {
-    const currentUser = req.user;
-
-    if (currentUser.nameSurname === postedNameSurname) {
-      throw new BadRequestException('You cannot follow yourself');
-    } else {
-      try {
-        const user = await this.userModel.findOne({
-          nameSurname: currentUser.nameSurname,
-        });
-        const otherUser = await this.userModel.findOne({
-          nameSurname: postedNameSurname,
-        });
-
-        if (!otherUser) {
-          throw new NotFoundException();
-        }
-
-        if (!otherUser.followers.includes(currentUser.nameSurname)) {
-          await user.updateOne({
-            $push: { followings: postedNameSurname },
-          });
-
-          await otherUser.updateOne({
-            $push: { followers: currentUser.nameSurname },
-          });
-          return `${otherUser.nameSurname} followed`;
-        } else {
-          throw new BadRequestException('You are already following this user');
-        }
-      } catch (e) {
-        console.log(e);
-
-        if (e instanceof NotFoundException) {
-          throw new NotFoundException(e.message);
-        } else if (e instanceof BadRequestException) {
-          throw new BadRequestException(e.message);
-        } else {
-          throw new InternalServerErrorException(e.message);
-        }
-      }
-    }
+  async getMe(userId: number) {
+    return this.userModel.findById(userId);
   }
 
-  // NEED REFACTORING // follow and unfollow methods kinda similar. We can refactor them later
-  async unfollowUser(@Request() req: any, postedNameSurname: string) {
-    const currentUser = req.user;
+  async followUnFollowLogic(userId: number, postedNameSurname: FollowLogicDTO) {
+    const { nameSurname } = postedNameSurname;
+    const user = await this.userModel.findById(userId);
+    const otherUser = await this.userModel.findOne({
+      nameSurname,
+    });
 
-    if (currentUser.nameSurname === postedNameSurname) {
-      throw new BadRequestException('You cannot unfollow yourself');
-    } else {
-      try {
-        const user = await this.userModel.findOne({
-          nameSurname: currentUser.nameSurname,
+    if (user.nameSurname === nameSurname) {
+      throw new BadRequestException('You cannot follow yourself');
+    }
+    try {
+      if (!otherUser) {
+        throw new NotFoundException();
+      }
+
+      if (!otherUser.followers?.includes(user.nameSurname)) {
+        await user.updateOne({
+          $push: { followings: nameSurname },
         });
-        const otherUser = await this.userModel.findOne({
-          nameSurname: postedNameSurname,
+
+        await otherUser.updateOne({
+          $push: { followers: user.nameSurname },
         });
+        const msg = `${otherUser.nameSurname} followed`;
+        return { msg };
+      }
 
-        if (!otherUser) {
-          throw new NotFoundException();
-        }
+      await user.updateOne({
+        $pull: {
+          followings: otherUser.nameSurname,
+        },
+      });
+      await otherUser.updateOne({
+        $pull: {
+          followers: user.nameSurname,
+        },
+      });
 
-        if (otherUser.followers.includes(currentUser.nameSurname)) {
-          await user.updateOne({
-            $pull: { followings: postedNameSurname },
-          });
+      const msg = `${otherUser.nameSurname} unfollowed`;
+      return { msg };
+    } catch (e) {
+      console.log(e);
 
-          await otherUser.updateOne({
-            $pull: { followers: currentUser.nameSurname },
-          });
-          return `${otherUser.nameSurname} unfollowed`;
-        } else {
-          throw new BadRequestException('You can not unfollow this user');
-        }
-      } catch (e) {
-        console.log(e);
-
-        if (e instanceof NotFoundException) {
-          throw new NotFoundException(e.message);
-        } else if (e instanceof BadRequestException) {
-          throw new BadRequestException(e.message);
-        } else {
-          throw new InternalServerErrorException(e.message);
-        }
+      if (e instanceof NotFoundException) {
+        throw new NotFoundException(e.message);
+      } else if (e instanceof BadRequestException) {
+        throw new BadRequestException(e.message);
+      } else {
+        throw new InternalServerErrorException(e.message);
       }
     }
   }
 }
-// commit

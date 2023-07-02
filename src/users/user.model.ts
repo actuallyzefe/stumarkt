@@ -17,10 +17,10 @@ export class User {
   mobile: string;
 
   @Prop({ required: false, ref: 'User', type: mongoose.Types.ObjectId })
-  followers: User[];
+  followers: string[];
 
   @Prop({ required: false, ref: 'User', type: mongoose.Types.ObjectId })
-  followings: User[];
+  followings: string[];
 
   @Prop({ required: false, type: String, default: '' })
   bio: string;
@@ -45,7 +45,7 @@ export class User {
   })
   studyArea: StudyArea;
 
-  @Prop({ required: false, type: String })
+  @Prop({ required: false, type: String, select: false })
   hashedRt: string;
 
   @Prop({ type: String, unique: true })
