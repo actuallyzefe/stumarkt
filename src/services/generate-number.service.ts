@@ -9,7 +9,7 @@ import { generateNumber } from 'src/utils/generate-number';
 export class GenerateNumberService {
   constructor(
     @InjectModel(User.name) private userModel: Model<User>,
-    @InjectModel(User.name) private productModel: Model<Product>,
+    @InjectModel(Product.name) private productModel: Model<Product>,
   ) {}
 
   async findDuplicateNumber(accountOrProduct: string) {
