@@ -55,8 +55,8 @@ export class ProductsService {
           listings: product,
         },
       });
-
       await product.save();
+      await user.save();
 
       return { status: 'Success', msg: 'Product uploaded' };
     } catch (e) {
