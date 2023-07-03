@@ -17,19 +17,24 @@ export class ProductsService {
   ) {}
 
   async uploadProduct(
-    file: Express.Multer.File,
+    files: Express.Multer.File[],
     userId: number,
     productDetails: ProductDTO,
   ) {
     const { title, price, description, productStatus, type, tags } =
       productDetails;
     const user = await this.userModel.findById(userId);
-    const key = `${file.fieldname}${Date.now()}`;
     const productNo = generateNumber(7);
     const parentFolder = 'products';
+    const imageUrls = [];
 
     try {
-      await this.awsService.uploadFile(file, key, parentFolder, productNo);
+      for (const file of files) {
+        const key = `${parentFolder}/${productNo}/${file.fieldname}`;
+        await this.awsService.uploadFiles(files, parentFolder, productNo);
+
+        imageUrls.push(key);
+      }
 
       const product = await this.productModel.create({
         tags,
@@ -38,7 +43,7 @@ export class ProductsService {
         description,
         productStatus,
         type,
-        imageUrl: key,
+        imageUrls,
         uploadedBy: user._id,
         productNo,
       });

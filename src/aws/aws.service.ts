@@ -22,31 +22,42 @@ export class AwsService {
     });
   }
 
-  async uploadFile(
-    file: Express.Multer.File,
-    key: string,
+  async uploadFiles(
+    files: Express.Multer.File[],
     parent_folder: string,
     product_number: string,
   ) {
     const bucket = this.configService.get<string>('S3_BUCKET');
     const folder = `${parent_folder}/${product_number}`;
-    const newKey = `${folder}/${key}`;
 
-    const input: PutObjectCommandInput = {
-      Body: file.stream,
-      Bucket: bucket,
-      Key: newKey,
-      ContentType: file.mimetype,
-    };
+    const uploadPromises = files.map((file) => {
+      const key = `${folder}/${file.fieldname}${Date.now()}`;
+
+      const input: PutObjectCommandInput = {
+        Body: file.stream,
+        Bucket: bucket,
+        Key: key,
+        ContentType: file.mimetype,
+      };
+
+      return this.s3.send(new PutObjectCommand(input));
+    });
+
     try {
-      const response: PutObjectCommandOutput = await this.s3.send(
-        new PutObjectCommand(input),
+      const responses: PutObjectCommandOutput[] = await Promise.all(
+        uploadPromises,
       );
-      if (response.$metadata.httpStatusCode === 200) {
-        const message = `image uploaded to s3 ${parent_folder} folder`;
+
+      const successfulUploads = responses.filter(
+        (response) => response.$metadata.httpStatusCode === 200,
+      );
+
+      if (successfulUploads.length === files.length) {
+        const message = `All files uploaded to S3 ${parent_folder} folder`;
         return { message };
+      } else {
+        throw new Error('Some files failed to upload');
       }
-      throw new Error('Image upload failed');
     } catch (e) {
       const msg = e.message;
       console.log(e);

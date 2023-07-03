@@ -11,8 +11,8 @@ export class Product {
   @Prop({ required: true, type: String })
   description: string;
 
-  @Prop({ required: true, type: String })
-  imageUrl: string;
+  @Prop({ required: false, type: [String] })
+  imageUrls: string[];
 
   @Prop({ required: true, type: String })
   type: string;
