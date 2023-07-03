@@ -14,9 +14,10 @@ import { Tokens } from './types';
 import { LoginDTO } from './dtos/login.dto';
 import { ConfigService } from '@nestjs/config';
 import { GenerateNumberService } from 'src/utils/generate-number.service';
+import { AuthInterface } from './interfaces/auth.interface';
 
 @Injectable()
-export class AuthService {
+export class AuthService implements AuthInterface {
   constructor(
     @InjectModel(User.name) private userModel: Model<User>,
     private jwtService: JwtService,
@@ -73,7 +74,7 @@ export class AuthService {
     }
   }
 
-  async logout(userId: number) {
+  async logout(userId: number): Promise<void> {
     await this.userModel.updateMany(
       { _id: userId },
       { $set: { hashedRt: null } },
@@ -81,7 +82,7 @@ export class AuthService {
   }
 
   // UTILITES
-  async updateRtHash(userId: number, rt: string) {
+  async updateRtHash(userId: number, rt: string): Promise<void> {
     const hash = await bcrypt.hash(rt, 10);
     await this.userModel.findByIdAndUpdate(userId, {
       $set: { hashedRt: hash },
@@ -117,7 +118,7 @@ export class AuthService {
     };
   }
 
-  async refreshTokens(userId: number, rt: string) {
+  async refreshTokens(userId: number, rt: string): Promise<Tokens> {
     const user = await this.userModel.findById(userId);
     if (!user || !user.hashedRt) throw new ForbiddenException();
 
