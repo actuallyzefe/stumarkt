@@ -5,7 +5,7 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { User, UserSchema } from 'src/users/user.model';
 import { AtStrategy, RtStrategy } from './strategies';
 import { JwtModule } from '@nestjs/jwt';
-import { GenerateNumberService } from 'src/utils/services/generate-number.service';
+import { GenerateNumberService } from 'src/utils/generate-number.service';
 import { Product, ProductSchema } from 'src/products/product.model';
 
 @Module({

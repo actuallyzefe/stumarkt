@@ -13,7 +13,7 @@ import { JwtService } from '@nestjs/jwt';
 import { Tokens } from './types';
 import { LoginDTO } from './dtos/login.dto';
 import { ConfigService } from '@nestjs/config';
-import { GenerateNumberService } from 'src/utils/services/generate-number.service';
+import { GenerateNumberService } from 'src/utils/generate-number.service';
 
 @Injectable()
 export class AuthService {
