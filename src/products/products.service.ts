@@ -55,6 +55,7 @@ export class ProductsService {
           listings: product,
         },
       });
+
       await product.save();
       await user.save();
 
