@@ -26,40 +26,51 @@ export class AuthService {
 
   async signup(userCredentials: SignupDTO): Promise<Tokens> {
     const { mobile, password } = userCredentials;
-    const duplicatedMobile = await this.userModel.findOne({ mobile });
 
-    if (duplicatedMobile)
-      throw new BadRequestException('This phone number already taken');
+    try {
+      const duplicatedMobile = await this.userModel.findOne({ mobile });
 
-    const salt = await bcrypt.genSalt(10);
-    const hashedPassword = await bcrypt.hash(password, salt);
+      if (duplicatedMobile)
+        throw new BadRequestException('This phone number already taken');
 
-    userCredentials.password = hashedPassword;
-    const accountNumber = await this.generateNumberService.validNumber(10);
+      const salt = await bcrypt.genSalt(10);
+      const hashedPassword = await bcrypt.hash(password, salt);
 
-    const newUser = await this.userModel.create(userCredentials);
-    newUser.accountNumber = accountNumber;
-    newUser.save();
+      userCredentials.password = hashedPassword;
+      const accountNumber = await this.generateNumberService.validNumber(10);
 
-    const tokens = await this.getTokens(newUser.id, newUser.mobile);
-    await this.updateRtHash(newUser.id, tokens.refresh_token);
+      const newUser = await this.userModel.create(userCredentials);
+      newUser.accountNumber = accountNumber;
+      newUser.save();
 
-    return tokens;
+      const tokens = await this.getTokens(newUser.id, newUser.mobile);
+      await this.updateRtHash(newUser.id, tokens.refresh_token);
+
+      return tokens;
+    } catch (e) {
+      console.log(e);
+      return e.message;
+    }
   }
 
   async login(userCredentials: LoginDTO): Promise<Tokens> {
     const { mobile, password } = userCredentials;
 
-    const user = await this.userModel.findOne({ mobile }).select('+password');
-    if (!user) throw new NotFoundException();
+    try {
+      const user = await this.userModel.findOne({ mobile }).select('+password');
+      if (!user) throw new NotFoundException();
 
-    const passwordMatch = await bcrypt.compare(password, user.password);
-    if (!passwordMatch) throw new ForbiddenException('Invalid Password');
+      const passwordMatch = await bcrypt.compare(password, user.password);
+      if (!passwordMatch) throw new ForbiddenException('Invalid Password');
 
-    const tokens = await this.getTokens(user.id, user.mobile);
-    await this.updateRtHash(user.id, tokens.refresh_token);
+      const tokens = await this.getTokens(user.id, user.mobile);
+      await this.updateRtHash(user.id, tokens.refresh_token);
 
-    return tokens;
+      return tokens;
+    } catch (e) {
+      console.log(e);
+      return e.message;
+    }
   }
 
   async logout(userId: number) {
