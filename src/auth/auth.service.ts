@@ -35,7 +35,7 @@ export class AuthService {
     const hashedPassword = await bcrypt.hash(password, salt);
 
     userCredentials.password = hashedPassword;
-    const accountNumber = await this.generateNumberService.validAccountNumber();
+    const accountNumber = await this.generateNumberService.validNumber(10);
 
     const newUser = await this.userModel.create(userCredentials);
     newUser.accountNumber = accountNumber;

@@ -26,39 +26,19 @@ export class GenerateNumberService {
     return existingNumber;
   }
 
-  async validAccountNumber(): Promise<string> {
+  async validNumber(length: number): Promise<string> {
     try {
-      let account_number = generateNumber(10);
+      let number = generateNumber(length);
 
-      let existingAccountNumber = await this.findDuplicateNumber(
-        account_number,
-      );
+      let existingNumber = await this.findDuplicateNumber(number);
 
-      while (existingAccountNumber) {
-        account_number = generateNumber(10);
+      while (existingNumber) {
+        number = generateNumber(length);
 
-        existingAccountNumber = await this.findDuplicateNumber(account_number);
+        existingNumber = await this.findDuplicateNumber(number);
       }
 
-      return account_number;
-    } catch (e) {
-      throw new InternalServerErrorException(e.message);
-    }
-  }
-
-  async validProductNumber(): Promise<string> {
-    try {
-      let productNumber = generateNumber(7);
-
-      let existingProductNumber = await this.findDuplicateNumber(productNumber);
-
-      while (existingProductNumber) {
-        productNumber = generateNumber(7);
-
-        existingProductNumber = await this.findDuplicateNumber(productNumber);
-      }
-
-      return productNumber;
+      return number;
     } catch (e) {
       throw new InternalServerErrorException(e.message);
     }

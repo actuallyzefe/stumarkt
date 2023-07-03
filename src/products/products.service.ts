@@ -7,6 +7,7 @@ import { Product } from './product.model';
 import { ProductDTO } from './dtos/product.dto';
 import { generateNumber } from 'src/utils/generate-number';
 import { ReturnStatus } from 'src/types';
+import { GenerateNumberService } from 'src/utils/generate-number.service';
 
 @Injectable()
 export class ProductsService {
@@ -14,6 +15,7 @@ export class ProductsService {
     @InjectModel(User.name) private userModel: Model<User>,
     @InjectModel(Product.name) private productModel: Model<Product>,
     private awsService: AwsService,
+    private generateNumberService: GenerateNumberService,
   ) {}
 
   async uploadProduct(
@@ -24,7 +26,7 @@ export class ProductsService {
     const { title, price, description, productStatus, type, tags } =
       productDetails;
     const user = await this.userModel.findById(userId);
-    const productNo = generateNumber(7);
+    const productNo = await this.generateNumberService.validNumber(7);
     const parentFolder = 'products';
     const imageUrls = [];
 
