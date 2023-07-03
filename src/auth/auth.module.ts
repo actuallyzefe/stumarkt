@@ -6,6 +6,7 @@ import { User, UserSchema } from 'src/users/user.model';
 import { AtStrategy, RtStrategy } from './strategies';
 import { JwtModule } from '@nestjs/jwt';
 import { GenerateNumberService } from 'src/services/generate-number.service';
+import { Product, ProductSchema } from 'src/products/product.model';
 
 @Module({
   controllers: [AuthController],
@@ -13,6 +14,7 @@ import { GenerateNumberService } from 'src/services/generate-number.service';
   imports: [
     JwtModule.register({}),
     MongooseModule.forFeature([{ name: User.name, schema: UserSchema }]),
+    MongooseModule.forFeature([{ name: Product.name, schema: ProductSchema }]),
   ],
 })
 export class AuthModule {}

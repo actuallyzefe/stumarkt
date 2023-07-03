@@ -6,6 +6,7 @@ import {
   PutObjectCommandOutput,
 } from '@aws-sdk/client-s3';
 import { ConfigService } from '@nestjs/config';
+
 @Injectable()
 export class AwsService {
   private region: string;
@@ -32,7 +33,7 @@ export class AwsService {
     const newKey = `${folder}/${key}`;
 
     const input: PutObjectCommandInput = {
-      Body: file.buffer,
+      Body: file.stream,
       Bucket: bucket,
       Key: newKey,
       ContentType: file.mimetype,

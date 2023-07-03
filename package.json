@@ -21,6 +21,7 @@
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.362.0",
+    "@aws-sdk/middleware-user-agent": "^3.363.0",
     "@nestjs/common": "^9.0.0",
     "@nestjs/config": "^3.0.0",
     "@nestjs/core": "^9.0.0",
@@ -31,7 +32,7 @@
     "@types/aws-sdk": "^2.7.0",
     "@types/bcrypt": "^5.0.0",
     "@types/multer": "^1.4.7",
-    "aws-sdk": "^2.1407.0",
+    "aws-sdk": "^2.1409.0",
     "bcrypt": "^5.1.0",
     "class-transformer": "^0.5.1",
     "class-validator": "^0.14.0",
