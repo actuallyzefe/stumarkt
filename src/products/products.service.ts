@@ -6,7 +6,7 @@ import { User } from 'src/users/user.model';
 import { Product } from './product.model';
 import { ProductDTO } from './dtos/product.dto';
 import { generateNumber } from 'src/utils/generate-number';
-import { ReturnStatus } from './types';
+import { ReturnStatus } from 'src/types';
 
 @Injectable()
 export class ProductsService {
