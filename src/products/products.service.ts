@@ -50,6 +50,12 @@ export class ProductsService {
         productNo,
       });
 
+      await user.updateOne({
+        $push: {
+          listings: product,
+        },
+      });
+
       await product.save();
 
       return { status: 'Success', msg: 'Product uploaded' };
