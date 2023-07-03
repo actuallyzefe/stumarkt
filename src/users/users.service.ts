@@ -8,6 +8,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { User } from './user.model';
 import { FollowLogicDTO } from './dtos/follow-logic.dto';
+import { ReturnStatus } from 'src/types';
 
 @Injectable()
 export class UsersService {
@@ -17,7 +18,10 @@ export class UsersService {
     return this.userModel.findById(userId);
   }
 
-  async followUnFollowLogic(userId: number, postedNameSurname: FollowLogicDTO) {
+  async followUnFollowLogic(
+    userId: number,
+    postedNameSurname: FollowLogicDTO,
+  ): Promise<ReturnStatus> {
     const { nameSurname } = postedNameSurname;
     const user = await this.userModel.findById(userId);
     const otherUser = await this.userModel.findOne({
@@ -41,7 +45,7 @@ export class UsersService {
           $push: { followers: user.nameSurname },
         });
         const msg = `${otherUser.nameSurname} followed`;
-        return { msg };
+        return { status: 'Success', msg };
       }
 
       await user.updateOne({
@@ -56,7 +60,7 @@ export class UsersService {
       });
 
       const msg = `${otherUser.nameSurname} unfollowed`;
-      return { msg };
+      return { status: 'Success', msg };
     } catch (e) {
       console.log(e);
 

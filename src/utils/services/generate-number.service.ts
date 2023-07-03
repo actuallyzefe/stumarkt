@@ -12,7 +12,7 @@ export class GenerateNumberService {
     @InjectModel(Product.name) private productModel: Model<Product>,
   ) {}
 
-  async findDuplicateNumber(accountOrProduct: string) {
+  async findDuplicateNumber(accountOrProduct: string): Promise<string> {
     let existingNumber: string;
     if (accountOrProduct.length === 10) {
       existingNumber = await this.userModel.findOne({
@@ -23,11 +23,10 @@ export class GenerateNumberService {
         productNo: accountOrProduct,
       });
     }
-    console.log(existingNumber);
     return existingNumber;
   }
 
-  async validAccountNumber() {
+  async validAccountNumber(): Promise<string> {
     try {
       let account_number = generateNumber(10);
 
@@ -47,7 +46,7 @@ export class GenerateNumberService {
     }
   }
 
-  async validProductNumber() {
+  async validProductNumber(): Promise<string> {
     try {
       let productNumber = generateNumber(7);
 

@@ -11,7 +11,7 @@ import { SignupDTO } from './dtos/signup.dto';
 import { LoginDTO } from './dtos/login.dto';
 import { Tokens } from './types';
 
-import { AtGuard, RtGuard } from './common/guards';
+import { RtGuard } from './common/guards';
 import { GetCurrentUser, GetCurrentUserId, Public } from './common/decorators';
 
 @Controller('auth')

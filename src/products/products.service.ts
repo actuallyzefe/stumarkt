@@ -5,8 +5,8 @@ import { AwsService } from 'src/aws/aws.service';
 import { User } from 'src/users/user.model';
 import { Product } from './product.model';
 import { ProductDTO } from './dtos/product.dto';
-
 import { generateNumber } from 'src/utils/generate-number';
+import { ReturnStatus } from './types';
 
 @Injectable()
 export class ProductsService {
@@ -20,7 +20,7 @@ export class ProductsService {
     files: Express.Multer.File[],
     userId: number,
     productDetails: ProductDTO,
-  ) {
+  ): Promise<ReturnStatus> {
     const { title, price, description, productStatus, type, tags } =
       productDetails;
     const user = await this.userModel.findById(userId);
@@ -60,7 +60,7 @@ export class ProductsService {
     } catch (e) {
       const msg = e.message;
       console.log(e);
-      return { msg };
+      return { status: 'Failed', msg };
     }
   }
 
