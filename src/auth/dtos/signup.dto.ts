@@ -4,8 +4,8 @@ import {
   IsOptional,
   IsString,
 } from 'class-validator';
-import { SchoolStatus } from '../enums/school-status.enum';
-import { StudyArea } from '../enums/study-area.enum';
+import { SchoolStatus } from '../../users/enums/school-status.enum';
+import { StudyArea } from '../../users/enums/study-area.enum';
 
 export class SignupDTO {
   @IsString()
