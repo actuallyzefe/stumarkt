@@ -16,16 +16,20 @@ export class User {
   @Prop({ required: true, type: String, unique: true })
   mobile: string;
 
-  @Prop({ required: false, ref: 'User', type: mongoose.Types.ObjectId })
+  @Prop({ required: false, ref: 'User', type: mongoose.Schema.Types.ObjectId })
   followers: string[];
 
-  @Prop({ required: false, ref: 'User', type: mongoose.Types.ObjectId })
+  @Prop({ required: false, ref: 'User', type: mongoose.Schema.Types.ObjectId })
   followings: string[];
 
   @Prop({ required: false, type: String, default: '' })
   bio: string;
 
-  @Prop({ required: false, ref: 'Product', type: mongoose.Types.ObjectId })
+  @Prop({
+    required: false,
+    ref: 'Product',
+    type: mongoose.Schema.Types.ObjectId,
+  })
   listings: [];
 
   @Prop({ required: false, type: String })

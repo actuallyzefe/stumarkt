@@ -5,7 +5,6 @@ import { AwsService } from 'src/aws/aws.service';
 import { User } from 'src/users/user.model';
 import { Product } from './product.model';
 import { ProductDTO } from './dtos/product.dto';
-import { generateNumber } from 'src/utils/generate-number';
 import { ReturnStatus } from 'src/types';
 import { GenerateNumberService } from 'src/utils/generate-number.service';
 
@@ -23,8 +22,6 @@ export class ProductsService {
     userId: number,
     productDetails: ProductDTO,
   ): Promise<ReturnStatus> {
-    const { title, price, description, productStatus, type, tags } =
-      productDetails;
     const user = await this.userModel.findById(userId);
     const productNo = await this.generateNumberService.validNumber(7);
     const parentFolder = 'products';
@@ -39,12 +36,7 @@ export class ProductsService {
       }
 
       const product = await this.productModel.create({
-        tags,
-        title,
-        price,
-        description,
-        productStatus,
-        type,
+        ...productDetails,
         imageUrls,
         uploadedBy: user._id,
         productNo,
@@ -55,9 +47,6 @@ export class ProductsService {
           listings: product,
         },
       });
-
-      await product.save();
-      await user.save();
 
       return { status: 'Success', msg: 'Product uploaded' };
     } catch (e) {

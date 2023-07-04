@@ -3,7 +3,6 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { Product } from 'src/products/product.model';
 import { User } from 'src/users/user.model';
-import { generateNumber } from 'src/utils/generate-number';
 
 @Injectable()
 export class GenerateNumberService {
@@ -28,12 +27,12 @@ export class GenerateNumberService {
 
   async validNumber(length: number): Promise<string> {
     try {
-      let number = generateNumber(length);
+      let number = this.generateNumber(length);
 
       let existingNumber = await this.findDuplicateNumber(number);
 
       while (existingNumber) {
-        number = generateNumber(length);
+        number = this.generateNumber(length);
 
         existingNumber = await this.findDuplicateNumber(number);
       }
@@ -42,5 +41,17 @@ export class GenerateNumberService {
     } catch (e) {
       throw new InternalServerErrorException(e.message);
     }
+  }
+
+  generateNumber(length: number): string {
+    const digits = '0123456789';
+    let number = '';
+
+    for (let i = 0; i < length; i++) {
+      const randomIndex = Math.floor(Math.random() * digits.length);
+      number += digits[randomIndex];
+    }
+
+    return number;
   }
 }

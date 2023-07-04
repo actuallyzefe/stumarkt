@@ -13,8 +13,10 @@ import { Product, ProductSchema } from 'src/products/product.model';
   providers: [AuthService, AtStrategy, RtStrategy, GenerateNumberService],
   imports: [
     JwtModule.register({}),
-    MongooseModule.forFeature([{ name: User.name, schema: UserSchema }]),
-    MongooseModule.forFeature([{ name: Product.name, schema: ProductSchema }]),
+    MongooseModule.forFeature([
+      { name: User.name, schema: UserSchema },
+      { name: Product.name, schema: ProductSchema },
+    ]),
   ],
 })
 export class AuthModule {}

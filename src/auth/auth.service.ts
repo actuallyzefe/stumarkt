@@ -42,7 +42,7 @@ export class AuthService implements AuthInterface {
 
       const newUser = await this.userModel.create(userCredentials);
       newUser.accountNumber = accountNumber;
-      newUser.save();
+      await newUser.save();
 
       const tokens = await this.getTokens(newUser.id, newUser.mobile);
       await this.updateRtHash(newUser.id, tokens.refresh_token);
@@ -75,9 +75,9 @@ export class AuthService implements AuthInterface {
   }
 
   async logout(userId: number): Promise<void> {
-    await this.userModel.updateMany(
+    await this.userModel.findByIdAndUpdate(
       { _id: userId },
-      { $set: { hashedRt: null } },
+      { $unset: { hashedRt: null } },
     );
   }
 
@@ -89,7 +89,7 @@ export class AuthService implements AuthInterface {
     });
   }
   async getTokens(userId: number, mobile: string): Promise<Tokens> {
-    const [at, rt] = await Promise.all([
+    const [access_token, refresh_token] = await Promise.all([
       this.jwtService.signAsync(
         {
           sub: userId,
@@ -113,8 +113,8 @@ export class AuthService implements AuthInterface {
     ]);
 
     return {
-      access_token: at,
-      refresh_token: rt,
+      access_token,
+      refresh_token,
     };
   }
 

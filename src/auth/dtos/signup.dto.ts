@@ -6,9 +6,8 @@ import {
 } from 'class-validator';
 import { SchoolStatus } from '../../users/enums/school-status.enum';
 import { StudyArea } from '../../users/enums/study-area.enum';
-import { SignupInterface } from '../interfaces/signup.interface';
 
-export class SignupDTO implements SignupInterface {
+export class SignupDTO {
   @IsString()
   @IsNotEmpty()
   nameSurname: string;

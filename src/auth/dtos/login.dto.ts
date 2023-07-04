@@ -1,7 +1,6 @@
 import { IsMobilePhone, IsNotEmpty, IsString } from 'class-validator';
-import { LoginInterface } from '../interfaces/login.interface';
 
-export class LoginDTO implements LoginInterface {
+export class LoginDTO {
   @IsString()
   @IsNotEmpty()
   @IsMobilePhone('tr-TR')

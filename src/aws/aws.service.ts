@@ -40,7 +40,9 @@ export class AwsService {
         ContentType: file.mimetype,
       };
 
-      return this.s3.send(new PutObjectCommand(input));
+      const object = new PutObjectCommand(input);
+
+      return this.s3.send(object);
     });
 
     try {
@@ -53,8 +55,7 @@ export class AwsService {
       );
 
       if (successfulUploads.length === files.length) {
-        const message = `All files uploaded to S3 ${parent_folder} folder`;
-        return { message };
+        return { msg: `All files uploaded to S3 ${parent_folder} folder` };
       } else {
         throw new Error('Some files failed to upload');
       }

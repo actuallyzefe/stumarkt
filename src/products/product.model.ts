@@ -29,7 +29,7 @@ export class Product {
   @Prop({ required: false, type: Array })
   tags: string[];
 
-  @Prop({ required: true, ref: 'User', type: mongoose.Types.ObjectId })
+  @Prop({ required: true, ref: 'User', type: mongoose.Schema.Types.ObjectId })
   uploadedBy: mongoose.Types.ObjectId;
 
   constructor(partial: Partial<Product>) {

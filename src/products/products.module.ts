@@ -10,8 +10,10 @@ import { GenerateNumberService } from 'src/utils/generate-number.service';
 @Module({
   providers: [ProductsService, AwsService, GenerateNumberService],
   imports: [
-    MongooseModule.forFeature([{ name: Product.name, schema: ProductSchema }]),
-    MongooseModule.forFeature([{ name: User.name, schema: UserSchema }]),
+    MongooseModule.forFeature([
+      { name: User.name, schema: UserSchema },
+      { name: Product.name, schema: ProductSchema },
+    ]),
   ],
   controllers: [ProductsController],
 })
