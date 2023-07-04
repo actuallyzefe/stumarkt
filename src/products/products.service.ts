@@ -57,6 +57,6 @@ export class ProductsService {
   }
 
   async findProducts() {
-    return this.productModel.find().populate('uploadedBy', 'nameSurname');
+    return this.productModel.find().populate('uploadedBy');
   }
 }
