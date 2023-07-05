@@ -28,7 +28,7 @@ export class User {
   @Prop({
     required: false,
     ref: 'Product',
-    type: mongoose.Schema.Types.ObjectId,
+    type: mongoose.Types.ObjectId,
   })
   listings: [];
 
