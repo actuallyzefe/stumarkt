@@ -24,4 +24,21 @@ export class ProductDTO {
   @IsString()
   @IsNotEmpty()
   type: string;
+
+  [Symbol.iterator]() {
+    const properties = Object.keys(this);
+    let index = 0;
+    return {
+      next: () => {
+        if (index < properties.length) {
+          const key = properties[index];
+          const value = this[key];
+          index++;
+          return { value, done: false };
+        } else {
+          return { value: undefined, done: true };
+        }
+      },
+    };
+  }
 }

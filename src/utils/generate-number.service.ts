@@ -1,26 +1,24 @@
 import { Injectable, InternalServerErrorException } from '@nestjs/common';
-import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
-import { Product } from 'src/products/product.model';
-import { User } from 'src/users/user.model';
+import { GetUserService } from './get-user.service';
+import { ProductHelperService } from './product-helper.service';
 
 @Injectable()
 export class GenerateNumberService {
   constructor(
-    @InjectModel(User.name) private userModel: Model<User>,
-    @InjectModel(Product.name) private productModel: Model<Product>,
+    private getUserService: GetUserService,
+    private productHelperService: ProductHelperService,
   ) {}
 
-  async findDuplicateNumber(accountOrProduct: string): Promise<string> {
-    let existingNumber: string;
+  async findDuplicateNumber(accountOrProduct: string): Promise<Object> {
+    let existingNumber: {};
     if (accountOrProduct.length === 10) {
-      existingNumber = await this.userModel.findOne({
-        accountNumber: accountOrProduct,
-      });
+      existingNumber = await this.getUserService.getUserByAccountNumber(
+        accountOrProduct,
+      );
     } else {
-      existingNumber = await this.productModel.findOne({
-        productNo: accountOrProduct,
-      });
+      existingNumber = await this.productHelperService.getProductByNo(
+        accountOrProduct,
+      );
     }
     return existingNumber;
   }

@@ -4,18 +4,17 @@ import {
   InternalServerErrorException,
   NotFoundException,
 } from '@nestjs/common';
-import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
-import { User } from './user.model';
+
 import { FollowLogicDTO } from './dtos/follow-logic.dto';
 import { ReturnStatus } from 'src/types';
+import { GetUserService } from 'src/utils/get-user.service';
 
 @Injectable()
 export class UsersService {
-  constructor(@InjectModel(User.name) private userModel: Model<User>) {}
+  constructor(private getUserService: GetUserService) {}
 
   async getMe(userId: number) {
-    return this.userModel.findById(userId);
+    return this.getUserService.getUserById(userId);
   }
 
   async followUnFollowLogic(
@@ -23,10 +22,10 @@ export class UsersService {
     postedNameSurname: FollowLogicDTO,
   ): Promise<ReturnStatus> {
     const { nameSurname } = postedNameSurname;
-    const user = await this.userModel.findById(userId);
-    const otherUser = await this.userModel.findOne({
+    const user = await this.getUserService.getUserById(userId);
+    const otherUser = await this.getUserService.getUserByNameSurname(
       nameSurname,
-    });
+    );
 
     if (user.nameSurname === nameSurname) {
       throw new BadRequestException('You cannot follow yourself');

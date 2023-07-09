@@ -6,9 +6,17 @@ import { ProductsController } from './products.controller';
 import { AwsService } from 'src/aws/aws.service';
 import { User, UserSchema } from 'src/users/user.model';
 import { GenerateNumberService } from 'src/utils/generate-number.service';
+import { ProductHelperService } from 'src/utils/product-helper.service';
+import { GetUserService } from 'src/utils/get-user.service';
 
 @Module({
-  providers: [ProductsService, AwsService, GenerateNumberService],
+  providers: [
+    ProductsService,
+    AwsService,
+    GenerateNumberService,
+    ProductHelperService,
+    GetUserService,
+  ],
   imports: [
     MongooseModule.forFeature([
       { name: User.name, schema: UserSchema },

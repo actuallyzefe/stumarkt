@@ -30,7 +30,7 @@ export class User {
     ref: 'Product',
     type: mongoose.Types.ObjectId,
   })
-  listings: [];
+  listings: mongoose.Types.ObjectId[];
 
   @Prop({ required: false, type: String })
   school: string;

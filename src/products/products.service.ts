@@ -1,18 +1,16 @@
 import { Injectable } from '@nestjs/common';
-import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
 import { AwsService } from 'src/aws/aws.service';
-import { User } from 'src/users/user.model';
-import { Product } from './product.model';
 import { ProductDTO } from './dtos/product.dto';
 import { ReturnStatus } from 'src/types';
 import { GenerateNumberService } from 'src/utils/generate-number.service';
+import { GetUserService } from 'src/utils/get-user.service';
+import { ProductHelperService } from 'src/utils/product-helper.service';
 
 @Injectable()
 export class ProductsService {
   constructor(
-    @InjectModel(User.name) private userModel: Model<User>,
-    @InjectModel(Product.name) private productModel: Model<Product>,
+    private productHelperService: ProductHelperService,
+    private getUserService: GetUserService,
     private awsService: AwsService,
     private generateNumberService: GenerateNumberService,
   ) {}
@@ -22,10 +20,10 @@ export class ProductsService {
     userId: number,
     productDetails: ProductDTO,
   ): Promise<ReturnStatus> {
-    const user = await this.userModel.findById(userId);
+    const user = await this.getUserService.getUserById(userId);
     const productNo = await this.generateNumberService.validNumber(7);
     const parentFolder = 'products';
-    const imageUrls = [];
+    const imageUrls: string[] = [];
 
     try {
       for (const file of files) {
@@ -35,12 +33,11 @@ export class ProductsService {
         imageUrls.push(key);
       }
 
-      const product = await this.productModel.create({
-        ...productDetails,
+      const product = await this.productHelperService.create(
         imageUrls,
-        uploadedBy: user._id,
         productNo,
-      });
+        ...productDetails,
+      );
 
       await user.updateOne({
         $push: {
@@ -57,6 +54,6 @@ export class ProductsService {
   }
 
   async findProducts() {
-    return this.productModel.find().populate('uploadedBy');
+    return this.productHelperService.findProducts();
   }
 }
