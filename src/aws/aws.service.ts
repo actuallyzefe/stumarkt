@@ -31,10 +31,10 @@ export class AwsService {
     const folder = `${parent_folder}/${product_number}`;
 
     const uploadPromises = files.map((file) => {
-      const key = `${folder}/${file.fieldname}${Date.now()}`;
+      let key = `${folder}/${file.originalname}`;
 
       const input: PutObjectCommandInput = {
-        Body: file.stream,
+        Body: file.buffer,
         Bucket: bucket,
         Key: key,
         ContentType: file.mimetype,

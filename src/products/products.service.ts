@@ -25,9 +25,10 @@ export class ProductsService {
     const parentFolder = 'products';
     const imageUrls: string[] = [];
 
+    console.log(productNo);
     try {
       for (const file of files) {
-        const key = `${parentFolder}/${productNo}/${file.fieldname}`;
+        const key = `${parentFolder}/${productNo}/${file.originalname}`;
         await this.awsService.uploadFiles(files, parentFolder, productNo);
 
         imageUrls.push(key);
