@@ -10,11 +10,15 @@ export class ProductHelperService {
     @InjectModel(Product.name) private productModel: Model<Product>,
   ) {}
 
-  async create(imageUrls: string[], productNo: string, ...productDetails: any) {
+  async create(
+    imageUrls: string[],
+    productNo: string,
+    productDetails: ProductDTO,
+  ) {
     return this.productModel.create({
-      ...productDetails,
       imageUrls,
       productNo,
+      ...productDetails,
     });
   }
 

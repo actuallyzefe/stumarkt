@@ -36,7 +36,7 @@ export class ProductsService {
       const product = await this.productHelperService.create(
         imageUrls,
         productNo,
-        ...productDetails,
+        productDetails,
       );
 
       await user.updateOne({
