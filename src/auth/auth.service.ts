@@ -28,12 +28,11 @@ export class AuthService implements AuthInterface {
   async signup(userCredentials: SignupDTO): Promise<Tokens> {
     const { mobile, password } = userCredentials;
 
+    const duplicatedMobile = await this.userModel.findOne({ mobile });
+
+    if (duplicatedMobile)
+      throw new BadRequestException('This phone number already taken');
     try {
-      const duplicatedMobile = await this.userModel.findOne({ mobile });
-
-      if (duplicatedMobile)
-        throw new BadRequestException('This phone number already taken');
-
       const salt = await bcrypt.genSalt(10);
       const hashedPassword = await bcrypt.hash(password, salt);
 
@@ -57,10 +56,9 @@ export class AuthService implements AuthInterface {
   async login(userCredentials: LoginDTO): Promise<Tokens> {
     const { mobile, password } = userCredentials;
 
+    const user = await this.userModel.findOne({ mobile }).select('+password');
+    if (!user) throw new NotFoundException();
     try {
-      const user = await this.userModel.findOne({ mobile }).select('+password');
-      if (!user) throw new NotFoundException();
-
       const passwordMatch = await bcrypt.compare(password, user.password);
       if (!passwordMatch) throw new ForbiddenException('Invalid Password');
 
