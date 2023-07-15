@@ -1,0 +1,16 @@
+version: '3'
+
+services:
+  nestjs-app:
+    restart: always
+    build: .
+    ports:
+      - 3000:3000
+    environment:
+      - NODE_ENV=production
+      - MONGODB_URI=${MONGODB_URI}
+      - AT_SECRET=${AT_SECRET}
+      - RT_SECRET=${RT_SECRET}
+      - AWS_SECRET_KEY=${AWS_SECRET_KEY}
+      - AWS_ACCESS_KEY=${AWS_ACCESS_KEY}
+    command: npm run start:prod

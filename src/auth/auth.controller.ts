@@ -25,12 +25,14 @@ export class AuthController {
   }
 
   @Public()
+  @HttpCode(200)
   @Post('login')
   login(@Body() userCredentials: LoginDTO): Promise<Tokens> {
     return this.authService.login(userCredentials);
   }
 
   @Post('logout')
+  @HttpCode(200)
   logout(@GetCurrentUserId() userId: number) {
     return this.authService.logout(userId);
   }
