@@ -18,7 +18,6 @@ export class ProductsController {
 
   @UseInterceptors(FilesInterceptor('productImage'))
   @Post('/upload-product')
-  @HttpCode(200)
   async uploadProduct(
     @GetCurrentUserId() userId: number,
     @UploadedFiles() files: Express.Multer.File[],
