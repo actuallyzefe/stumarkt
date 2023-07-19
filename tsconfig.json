@@ -1,6 +1,6 @@
 {
   "compilerOptions": {
-    "module": "commonjs",
+    "module": "CommonJS",
     "declaration": true,
     "removeComments": true,
     "emitDecoratorMetadata": true,
@@ -16,6 +16,18 @@
     "noImplicitAny": false,
     "strictBindCallApply": false,
     "forceConsistentCasingInFileNames": false,
-    "noFallthroughCasesInSwitch": false
+    "paths": {
+      "@src/*": ["src/"],
+      "@app/*": ["src/*"],
+      "@auth/*": ["src/auth/*"],
+      "@products/*": ["src/products/*"],
+      "@users/*": ["src/users/*"],
+      "@utils/*": ["src/utils/*"],
+      "@aws/*": ["src/aws/*"]
+    },
+    "lib": ["esnext"],
+    "esModuleInterop": true,
+    "moduleResolution": "Node",
+    "typeRoots": ["./node_modules/@types"]
   }
 }
