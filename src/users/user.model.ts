@@ -1,7 +1,7 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import mongoose, { HydratedDocument } from 'mongoose';
-import { SchoolStatus } from 'src/users/enums/school-status.enum';
-import { StudyArea } from 'src/users/enums/study-area.enum';
+import { SchoolStatus } from './enums/school-status.enum';
+import { StudyArea } from './enums/study-area.enum';
 
 @Schema({
   timestamps: true,
