@@ -1,6 +1,8 @@
 import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { GetUserService } from './get-user.service';
 import { ProductHelperService } from './product-helper.service';
+import { User } from '@app/users/user.model';
+import { Product } from '@app/products/product.model';
 
 @Injectable()
 export class GenerateNumberService {
@@ -9,16 +11,16 @@ export class GenerateNumberService {
     private productHelperService: ProductHelperService,
   ) {}
 
-  async findDuplicateNumber(accountOrProduct: string): Promise<Object> {
-    let existingNumber: {};
+  async findDuplicateNumber(accountOrProduct: string): Promise<String> {
+    let existingNumber: string;
     if (accountOrProduct.length === 10) {
-      existingNumber = await this.getUserService.getUserByAccountNumber(
-        accountOrProduct,
-      );
+      existingNumber = (
+        await this.getUserService.getUserByAccountNumber(accountOrProduct)
+      ).accountNumber;
     } else {
-      existingNumber = await this.productHelperService.getProductByNo(
-        accountOrProduct,
-      );
+      existingNumber = (
+        await this.productHelperService.getProductByNo(accountOrProduct)
+      ).productNo;
     }
     return existingNumber;
   }
