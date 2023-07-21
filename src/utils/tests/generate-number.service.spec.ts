@@ -20,7 +20,7 @@ describe('GenerateNumberService', () => {
   const mockUser = {
     _id: parseInt('64a2b2c6c228fb513630d87c'),
     nameSurname: 'Efe Karakanlı',
-    accountNumber: '1234321',
+    accountNumber: '1234567',
   };
   const mockUser2 = {
     _id: parseInt('64a2b2c6c228fb513630d87a'),
@@ -119,48 +119,53 @@ describe('GenerateNumberService', () => {
 
   describe('findDuplicateNumber', () => {
     it('should find duplicated account number', async () => {
+      const mockAccountNumber = '1234567';
       jest
         .spyOn(generateNumberService, 'findDuplicateNumber')
-        .mockResolvedValue('1234567');
+        .mockResolvedValue(mockAccountNumber);
 
-      const result = await generateNumberService.findDuplicateNumber('1234567');
+      const result = await generateNumberService.findDuplicateNumber(
+        mockAccountNumber,
+      );
 
       expect(generateNumberService.findDuplicateNumber).toHaveBeenCalledWith(
-        mockUser2.accountNumber,
+        mockAccountNumber,
       );
 
       expect(result).toEqual(mockUser.accountNumber);
     });
 
     it('should find duplicated product number', async () => {
+      const mockProductNo = '1234567';
       jest
         .spyOn(generateNumberService, 'findDuplicateNumber')
-        .mockResolvedValue(mockProduct.productNo);
+        .mockResolvedValue(mockProductNo);
 
       const result = await generateNumberService.findDuplicateNumber(
-        mockProduct.productNo,
+        mockProductNo,
       );
 
       expect(generateNumberService.findDuplicateNumber).toHaveBeenCalledWith(
-        mockProduct2.productNo,
+        mockProductNo,
       );
 
-      expect(result).toEqual(mockProduct2.productNo);
+      expect(result).toEqual(mockProduct.productNo);
     });
   });
 
   describe('validNumber', () => {
     it('should regenerate the product number if the created number is duplicated', async () => {
+      const mockProductNo = '1234567';
       jest
         .spyOn(generateNumberService, 'findDuplicateNumber')
-        .mockResolvedValue('1234567');
+        .mockResolvedValue(mockProductNo);
 
       const duplicated = await generateNumberService.findDuplicateNumber(
-        '1234567',
+        mockProductNo,
       );
 
       expect(generateNumberService.findDuplicateNumber).toHaveBeenCalledWith(
-        '1234567',
+        mockProductNo,
       );
 
       expect(duplicated).toEqual(mockProduct.productNo);
@@ -171,16 +176,17 @@ describe('GenerateNumberService', () => {
     });
 
     it('should regenerate the account number if the created number is duplicated', async () => {
+      const mockAccountNumber = '1234567';
       jest
         .spyOn(generateNumberService, 'findDuplicateNumber')
-        .mockResolvedValue('1234321');
+        .mockResolvedValue(mockAccountNumber);
 
       const duplicated = await generateNumberService.findDuplicateNumber(
-        '1234321',
+        mockAccountNumber,
       );
 
       expect(generateNumberService.findDuplicateNumber).toHaveBeenCalledWith(
-        '1234321',
+        mockAccountNumber,
       );
 
       expect(duplicated).toEqual(mockUser.accountNumber);
