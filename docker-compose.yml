@@ -6,11 +6,14 @@ services:
     build: .
     ports:
       - 3000:3000
+    volumes:
+      - /app/node_modules
+      - .:/app
     environment:
-      - NODE_ENV=production
+      - NODE_ENV=develompent
       - MONGODB_URI=${MONGODB_URI}
       - AT_SECRET=${AT_SECRET}
       - RT_SECRET=${RT_SECRET}
       - AWS_SECRET_KEY=${AWS_SECRET_KEY}
       - AWS_ACCESS_KEY=${AWS_ACCESS_KEY}
-    command: npm run start:prod
+    command: npm run start:dev

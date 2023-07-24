@@ -1,6 +1,6 @@
 FROM node:16-alpine
 
-WORKDIR /app
+WORKDIR "/app"
 
 COPY package.json .
 
@@ -10,4 +10,4 @@ COPY . .
 
 RUN npm run build
 
-CMD ["node", "dist/main.js"]
+CMD ["npm", "run","start:dev"]
